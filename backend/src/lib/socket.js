@@ -8,7 +8,9 @@ const server = http.createServer(app);
 // Attach Socket.IO to the server
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:5173"],
+        origin: process.env.NODE_ENV === "production"
+            ? [process.env.FRONTEND_URL, "https://mernstack-chatapp.onrender.com"]
+            : ["http://localhost:5173"],
     },
 });
 
