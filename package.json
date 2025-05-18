@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/Shivam-kr-00/MernStack-ChatApp/issues"
   },
-  "homepage": "https://github.com/Shivam-kr-00/MernStack-ChatApp#readme"
+  "homepage": "https://github.com/Shivam-kr-00/MernStack-ChatApp#readme",
+  "dependencies": {
+    "path-to-regexp": "^6.2.1"
+  }
 }
