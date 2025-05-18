@@ -75,11 +75,13 @@ const ChatContainer = () => {
               </time>
             </div>
 
-            <div className={`chat-bubble flex flex-col ${
-              message.senderId === authUser._id 
-                ? 'bg-primary/90 backdrop-blur-sm text-primary-content' 
-                : 'bg-base-300/90 backdrop-blur-sm text-base-content'
-            }`}>
+            {/* ✅ FIXED: Force black text in light mode */}
+  <div className={`chat-bubble flex flex-col ${
+  message.senderId === authUser._id
+    ? 'chat-bubble flex flex-col bg-base-300/90 backdrop-blur-sm text-base-content'
+    : 'bg-base-300/90 backdrop-blur-sm text-base-content'
+}`}>
+
               {message.image && (
                 <img
                   src={message.image}
