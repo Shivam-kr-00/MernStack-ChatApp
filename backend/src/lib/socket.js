@@ -1,46 +1,83 @@
+// socket.js
+
 import http from "http";
 import express from "express";
 import { Server } from "socket.io";
+import { detectEmotion } from "./aiService.js"; // ✅ Import AI emotion detection
 
 const app = express();
 const server = http.createServer(app);
 
-// Attach Socket.IO to the server
+// ✅ Fix CORS Settings: Allowing all origins temporarily for debugging
 const io = new Server(server, {
     cors: {
-        origin: process.env.NODE_ENV === "production"
-            ? [process.env.FRONTEND_URL, "https://mernstack-chatapp.onrender.com"]
-            : ["http://localhost:5173"],
-    },
+        origin: "http://localhost:5173", // or your frontend port
+        methods: ["GET", "POST"],
+        credentials: true
+    }
 });
 
-// Used to store onliine users
-const userSocketMap = {};//{userId : socketId}// we wiil sture user id as key and socket id as value 
-
+// ✅ Store online users (userId -> socketId)
+const userSocketMap = {};
 
 export function getReceiverSocketId(userId) {
-    return userSocketMap[userId];//t retrieves a socket ID for a given user ID from a map called userSocketMap.
+    return userSocketMap[userId] || null; // ✅ Prevent undefined errors
 }
 
-
-
-
-// Socket connection handler
+// 🔥 Handle user connections
 io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
+    console.log("✅ A user connected:", socket.id);
 
-    const userId = socket.handshake.query.userId
+    const userId = socket.handshake.query.userId;
     if (userId) {
-        userSocketMap[userId] = socket.id; // with the help of this we will gather all userId which handshake with socket menas those are online
+        userSocketMap[userId] = socket.id;
     }
-    // io.emits() is used to send events to all the connected clients
+
+    // Broadcast list of online users
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+    // 📩 Handle incoming messages
+    socket.on("message", (data) => {
+        if (!data || !data.text || data.text.trim() === "") {
+            console.log("⚠️ Empty message received, skipping AI detection.");
+            return;
+        }
+
+        console.log("📝 Processing message:", data.text);
+        const emotion = detectEmotion(data.text);
+        console.log("🔍 Detected Emotion:", emotion);
+
+        let suggestion = "";
+        if (emotion.includes("Angry")) {
+            suggestion = "Let's cool down and resolve this peacefully. 💙";
+        } else if (emotion.includes("Happy")) {
+            suggestion = "This chat is full of joy! Keep spreading the positivity! 😊";
+        }
+
+        console.log("💡 AI Suggestion:", suggestion); // ✅ Log the suggestion
+        socket.emit("moodSuggestion", { emotion, suggestion });
+    });
+
+    // Handle user disconnect
     socket.on("disconnect", () => {
-        console.log("A user disconnected:", socket.id);
-        // when user disconnect we will remove that user from userSocketMap
-        delete userSocketMap[userId];
+        console.log("❌ User disconnected:", socket.id);
+        Object.keys(userSocketMap).forEach(userId => {
+            if (userSocketMap[userId] === socket.id) {
+                delete userSocketMap[userId]; // ✅ Remove from map
+            }
+        });
+
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
 });
 
-export { io, app, server };
+// // ✅ Fix Backend Port: Start server only when ready
+// const PORT = process.env.PORT || 5000;
+// server.listen(PORT, () => {
+//     console.log(`🚀 Backend running on PORT ${PORT}`);
+// });
+
+
+// 👇 These three exports allow use in controller and index.js
+export { app, server, io };
+

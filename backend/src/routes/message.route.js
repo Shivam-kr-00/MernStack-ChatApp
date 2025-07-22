@@ -4,12 +4,14 @@ import {
     getMessages,
     getUsersForSidebar,
     sendMessage,
+    detectEmotionController
 } from "../controllers/message.controller.js";
 
 const router = express.Router();
 
 router.get("/users", protectRoute, getUsersForSidebar);
-router.get("/chat/:id", protectRoute, getMessages);     // ✅ more specific
+router.get("/:id", protectRoute, getMessages);     // ✅ more specific
 router.post("/send/:id", protectRoute, sendMessage);
+router.post("/detect", protectRoute, detectEmotionController);
 
 export default router;

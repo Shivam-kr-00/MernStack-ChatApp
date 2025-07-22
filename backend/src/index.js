@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js"; // `server` already created
 
+
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -48,13 +49,13 @@ app.use("/api/messages", messageRoutes);
 // --- Production Static File Serving Block ---
 // Commented out for development
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// if (process.env.NODE_ENV === "production") {
+//   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  })
-}
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+//   })
+// }
 
 
 // Start server and connect to DB

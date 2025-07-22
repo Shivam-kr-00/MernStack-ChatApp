@@ -3,6 +3,10 @@ import User from "../models/user.model.js"
 import Message from "../models/message.model.js";
 import cloudinary from "../lib/cloudinary.js"
 import { getReceiverSocketId, io } from "../lib/socket.js";
+import { detectEmotion } from "../lib/aiService.js";
+
+
+
 /* Purpose: Get a list of all users except the logged-in user.
 
 Where used: Frontend sidebar — to show who the user can chat with.
@@ -87,3 +91,16 @@ export const sendMessage = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
+
+//
+
+
+export const detectEmotionController = (req, res) => {
+    const { message } = req.body;
+    if (!message || typeof message !== "string") {
+        return res.status(400).json({ error: "Message text is required" });
+    }
+
+    const emotion = detectEmotion(message);
+    res.json({ emotion });
+};

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Shivam-kr-00/MernStack-ChatApp#readme",
   "dependencies": {
-    "path-to-regexp": "^6.2.1"
+    "path-to-regexp": "^6.2.1",
+    "sentiment": "^5.0.2"
   }
 }
