@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useAuthStore } from '../store/useAuthStore';
-import { Link, useNavigate } from 'react-router-dom';
-import { Settings, LogOut, User, MessageSquare, MoreVertical } from 'lucide-react';
-import SettingsPanel from './SettingsPanel';
+import React, { useState, useEffect, useRef } from "react";
+import { useAuthStore } from "../store/useAuthStore";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Settings,
+  LogOut,
+  User,
+  MessageSquare,
+  MoreVertical,
+} from "lucide-react";
+import SettingsPanel from "./SettingsPanel";
 
 const Navbar = () => {
   const { authUser, logout } = useAuthStore();
@@ -26,23 +32,21 @@ const Navbar = () => {
   }, []);
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate("/profile");
   };
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50">
         <div className="bg-base-200/50 backdrop-blur-md border-b border-white/10">
-        <div className="navbar w-full px-4 flex justify-between items-center">
-
+          <div className="navbar w-full px-4 flex justify-between items-center">
             {/* Logo and Brand */}
             <div className="navbar-start ml-7">
               <Link to="/" className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                  <MessageSquare className="text-white" size={24} />
-                </div>
-                <span className="text-xl font-bold text-base-content">
-                  Chatty
+                <MessageSquare className="text-orange-500" />
+
+                <span className=" text-2xl font-bold text-green-600 text-center tracking-wide">
+                  FeelTalk
                 </span>
               </Link>
             </div>
@@ -125,10 +129,7 @@ const Navbar = () => {
                   >
                     Login
                   </Link>
-                  <Link
-                    to="/signup"
-                    className="btn btn-primary btn-sm"
-                  >
+                  <Link to="/signup" className="btn btn-primary btn-sm">
                     Sign Up
                   </Link>
                 </div>

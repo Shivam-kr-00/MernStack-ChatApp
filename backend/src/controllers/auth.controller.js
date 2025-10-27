@@ -42,8 +42,18 @@ export const signup = async (req, res) => {
 
     }
     catch (error) {
-        console.log("Error in signup controller", error.message);
-        return res.status(500).json({ msg: "Internal server error" })
+        console.log("Error in signup controller", error);
+        if (error.name === 'ValidationError') {
+            const validationErrors = Object.keys(error.errors).map(key => ({
+                field: key,
+                message: error.errors[key].message
+            }));
+            return res.status(400).json({
+                msg: validationErrors[0].message,
+                errors: validationErrors
+            });
+        }
+        return res.status(500).json({ msg: "Internal server error" });
     }
 
 };
@@ -92,15 +102,15 @@ export const updateProfile = async (req, res) => {
     try {
         console.log("Update profile request received", req.user);
         const { profilePic, fullName, email, phoneNumber } = req.body;
-        
+
         if (!req.user || !req.user._id) {
             console.log("User not found in request object", req.user);
             return res.status(404).json({ message: "User not found" });
         }
-        
+
         const userId = req.user._id;
         const updateData = {};
-        
+
         // Only update fields that are provided
         if (profilePic) {
             try {
@@ -113,27 +123,27 @@ export const updateProfile = async (req, res) => {
                 return res.status(400).json({ message: "Failed to upload profile picture" });
             }
         }
-        
+
         if (fullName) updateData.fullName = fullName;
         if (email) updateData.email = email;
         if (phoneNumber) updateData.phoneNumber = phoneNumber;
-        
+
         // Only proceed if there are fields to update
         if (Object.keys(updateData).length === 0) {
             return res.status(400).json({ message: "No fields to update" });
         }
-        
+
         const updatedUser = await User.findByIdAndUpdate(
-            userId, 
+            userId,
             updateData,
             { new: true }
         ).select("-password");
-        
+
         if (!updatedUser) {
             console.log("User not found in database when updating", userId);
             return res.status(404).json({ message: "User not found in database" });
         }
-        
+
         console.log("User profile updated successfully");
         return res.status(200).json({
             user: updatedUser

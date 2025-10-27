@@ -1,5 +1,5 @@
-import React from 'react';
-import { MessageSquare } from 'lucide-react';
+import React from "react";
+import { MessageSquare } from "lucide-react";
 
 const NoChatSelected = () => {
   return (
@@ -8,8 +8,9 @@ const NoChatSelected = () => {
         <MessageSquare className="text-primary" size={36} />
       </div>
       <h3 className="text-2xl font-bold mb-2">No Conversation Selected</h3>
-      <p className="text-base-content/60 max-w-md">
-        Select a contact from the sidebar to start messaging or create a new conversation.
+      <p className="text-base-content/60 max-w-md ">
+        Select a contact from the sidebar to start messaging or create a new
+        conversation.
       </p>
     </div>
   );

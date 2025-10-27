@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useAuthStore } from '../store/useAuthStore';
-import { Camera } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuthStore } from "../store/useAuthStore";
+import { Camera } from "lucide-react";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState({
-    fullName: authUser?.fullName || '',
-    email: authUser?.email || '',
-    phoneNumber: authUser?.phoneNumber || '',
+    fullName: authUser?.fullName || "",
+    email: authUser?.email || "",
+    phoneNumber: authUser?.phoneNumber || "",
   });
 
   const handleImageUpload = async (e) => {
@@ -28,9 +28,9 @@ const ProfilePage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditedUser(prev => ({
+    setEditedUser((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -39,7 +39,7 @@ const ProfilePage = () => {
       await updateProfile(editedUser);
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update profile:', error);
+      console.error("Failed to update profile:", error);
     }
   };
 
@@ -55,7 +55,11 @@ const ProfilePage = () => {
             {/* Profile Image */}
             <div className="h-24 w-24 border-4 border-primary rounded-full relative overflow-hidden">
               <img
-                src={selectedImg || authUser?.profilePic || "/avatar.png"}
+                src={
+                  selectedImg ||
+                  authUser?.profilePic ||
+                  "/https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
+                }
                 alt="Profile"
                 className="h-full w-full object-cover"
               />
@@ -79,7 +83,9 @@ const ProfilePage = () => {
             <div className="w-full space-y-5">
               {/* Name */}
               <div>
-                <label className="block text-sm text-base-content/60 mb-1">Name</label>
+                <label className="block text-sm text-base-content/60 mb-1">
+                  Name
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -89,13 +95,17 @@ const ProfilePage = () => {
                     className="w-full px-3 py-2 rounded-md bg-base-100 text-base-content border border-base-content/20 focus:ring-2 focus:ring-primary outline-none"
                   />
                 ) : (
-                  <p className="text-lg font-medium text-base-content">{authUser?.fullName}</p>
+                  <p className="text-lg font-medium text-base-content">
+                    {authUser?.fullName}
+                  </p>
                 )}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-sm text-base-content/60 mb-1">Email</label>
+                <label className="block text-sm text-base-content/60 mb-1">
+                  Email
+                </label>
                 {isEditing ? (
                   <input
                     type="email"
@@ -105,13 +115,17 @@ const ProfilePage = () => {
                     className="w-full px-3 py-2 rounded-md bg-base-100 text-base-content border border-base-content/20 focus:ring-2 focus:ring-primary outline-none"
                   />
                 ) : (
-                  <p className="text-lg font-medium text-base-content">{authUser?.email}</p>
+                  <p className="text-lg font-medium text-base-content">
+                    {authUser?.email}
+                  </p>
                 )}
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block text-sm text-base-content/60 mb-1">Phone Number</label>
+                <label className="block text-sm text-base-content/60 mb-1">
+                  Phone Number
+                </label>
                 {isEditing ? (
                   <input
                     type="tel"
@@ -121,7 +135,9 @@ const ProfilePage = () => {
                     className="w-full px-3 py-2 rounded-md bg-base-100 text-base-content border border-base-content/20 focus:ring-2 focus:ring-primary outline-none"
                   />
                 ) : (
-                  <p className="text-lg font-medium text-base-content">{authUser?.phoneNumber || 'Not provided'}</p>
+                  <p className="text-lg font-medium text-base-content">
+                    {authUser?.phoneNumber || "Not provided"}
+                  </p>
                 )}
               </div>
 
