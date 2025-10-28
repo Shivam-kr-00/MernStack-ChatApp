@@ -63,7 +63,10 @@ const Navbar = () => {
                     >
                       <div className="w-10 h-10 rounded-full border-2 border-base-content/20 overflow-hidden transition-transform duration-200 group-hover:scale-105">
                         <img
-                          src={authUser.profilePic || "/avatar.png"}
+                          src={
+                            authUser.profilePic ||
+                            "/https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
+                          }
                           alt="profile"
                           className="w-full h-full object-cover"
                         />

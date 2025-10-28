@@ -46,16 +46,20 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-if (process.env.NODE_ENV === "production") {
-    const frontendPath = path.join(__dirname, "frontend", "dist");
-    app.use(express.static(frontendPath));
+// --- Production Static File Serving Block ---
+// Commented out for development
 
-    // Catch-all route AFTER API routes
-    app.get(/.*/, (req, res) => {
-        res.sendFile(path.join(frontendPath, 'index.html'));
-    });
+if (process.env.NODE_ENV === "production") {
+  const frontendPath = path.join(__dirname, "frontend", "dist");
+  app.use(express.static(frontendPath));
+
+  // Catch-all route AFTER API routes
+  app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
 
 }
+
 
 // Start server and connect to DB
 server.listen(PORT, () => {
