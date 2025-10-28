@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useChatStore } from '../store/useChatStore';
+import React, { useEffect, useState } from "react";
+import { useChatStore } from "../store/useChatStore";
 import { Users, Search, RefreshCcw } from "lucide-react";
-import { useAuthStore } from '../store/useAuthStore';
-import SidebarSkeleton from './skeletons/SidebarSkeleton';
+import { useAuthStore } from "../store/useAuthStore";
+import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 
 const Sidebar = () => {
-  const {
-    getUsers,
-    users,
-    selectedUser,
-    setSelectedUser,
-    isUsersLoading
-  } = useChatStore();
+  const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } =
+    useChatStore();
 
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     console.log("📦 Fetching users...");
@@ -24,11 +19,13 @@ const Sidebar = () => {
 
   // Filter users based on online status and search term
   const filteredUsers = users
-    .filter(user => !showOnlineOnly || onlineUsers.includes(user._id))
-    .filter(user => 
-      searchTerm === '' || 
-      user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((user) => !showOnlineOnly || onlineUsers.includes(user._id))
+    .filter(
+      (user) =>
+        searchTerm === "" ||
+        user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (user.email &&
+          user.email.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
   useEffect(() => {
@@ -42,12 +39,14 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className='flex flex-col h-full border-r border-base-content/10 bg-base-200/50 backdrop-blur-md text-base-content'>
+    <aside className="flex flex-col h-full border-r border-base-content/10 bg-base-200/50 backdrop-blur-md text-base-content">
       {/* Fixed Header */}
-      <div className='p-4 flex flex-col border-b border-base-content/10'>
+      <div className="p-4 flex flex-col border-b border-base-content/10">
         {/* Title */}
-        <div className='flex justify-between items-center mb-4'>
-          <span className='font-medium text-lg text-base-content'>Contacts</span>
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-medium text-lg text-base-content">
+            Contacts
+          </span>
         </div>
 
         {/* Search Bar */}
@@ -73,10 +72,13 @@ const Sidebar = () => {
             />
             <span className="text-sm text-base-content">Show online only</span>
           </label>
-          <button onClick={() => {
-            console.log("🔄 Refetching users...");
-            getUsers();
-          }} className="ml-auto">
+          <button
+            onClick={() => {
+              console.log("🔄 Refetching users...");
+              getUsers();
+            }}
+            className="ml-auto"
+          >
             <span className="text-xs text-base-content/50">
               <RefreshCcw size={14} className="inline" /> Refresh
             </span>
@@ -85,42 +87,51 @@ const Sidebar = () => {
       </div>
 
       {/* Scrollable User List */}
-      <div className='flex-1 overflow-y-auto custom-scrollbar p-2'>
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
         {isUsersLoading ? (
-          <div className='flex justify-center items-center h-full'>
-            <div className='loading loading-spinner text-primary'></div>
+          <div className="flex justify-center items-center h-full">
+            <div className="loading loading-spinner text-primary"></div>
           </div>
         ) : filteredUsers?.length > 0 ? (
           filteredUsers.map((user) => (
             <div
               key={user._id}
-              className={`flex items-center gap-2 p-3 cursor-pointer rounded-lg mb-1 ${selectedUser?._id === user._id ? 'bg-base-content/10' : 'hover:bg-base-content/5'}`}
+              className={`flex items-center gap-2 p-3 cursor-pointer rounded-lg mb-1 ${
+                selectedUser?._id === user._id
+                  ? "bg-base-content/10"
+                  : "hover:bg-base-content/5"
+              }`}
               onClick={() => {
                 console.log("🖱️ User clicked:", user);
                 setSelectedUser(user);
               }}
             >
-              <div className='relative'>
+              <div className="relative">
                 <img
-                  src={user.profilePic || "/avatar.png"}
+                  src={
+                    user.profilePic ||
+                    "/https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
+                  }
                   alt={user.fullName}
-                  className='size-12 object-cover rounded-full border-2 border-base-content/20'
+                  className="size-12 object-cover rounded-full border-2 border-base-content/20"
                 />
                 {onlineUsers.includes(user._id) && (
-                  <span className='absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-base-200' />
+                  <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-base-200" />
                 )}
               </div>
-              <div className='flex-1 min-w-0'>
-                <div className='font-medium truncate text-base-content'>{user.fullName}</div>
-                <div className='text-sm text-base-content/70'>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium truncate text-base-content">
+                  {user.fullName}
+                </div>
+                <div className="text-sm text-base-content/70">
                   {onlineUsers.includes(user._id) ? "Online" : "Offline"}
                 </div>
               </div>
             </div>
           ))
         ) : (
-          <div className='text-center text-base-content/50 py-8'>
-            {searchTerm ? 'No users found' : 'No users yet'}
+          <div className="text-center text-base-content/50 py-8">
+            {searchTerm ? "No users found" : "No users yet"}
           </div>
         )}
       </div>
