@@ -50,14 +50,19 @@ app.use("/api/messages", messageRoutes);
 // Commented out for development
 
 if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "frontend", "dist");
+  // ✅ Go one level up to reach frontend/dist
+  const frontendPath = path.join(__dirname, "../frontend/dist");
+
   app.use(express.static(frontendPath));
 
-  // Catch-all route AFTER API routes
-  app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
+  // ✅ Catch-all route for React Router
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(frontendPath, "index.html"));
   });
-
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running successfully");
+  });
 }
 
 
