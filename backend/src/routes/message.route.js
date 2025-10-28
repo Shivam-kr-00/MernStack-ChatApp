@@ -10,8 +10,8 @@ import {
 const router = express.Router();
 
 router.get("/users", protectRoute, getUsersForSidebar);
-router.get("/:id", protectRoute, getMessages);     // ✅ more specific
-router.post("/send/:id", protectRoute, sendMessage);
 router.post("/detect", protectRoute, detectEmotionController);
+router.post("/send/:id", protectRoute, sendMessage);
+router.get("/:id", protectRoute, getMessages);     // ✅ more specific
 
 export default router;
