@@ -4,7 +4,8 @@ import { Users, Search, RefreshCcw } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
+  // Accept props
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } =
     useChatStore();
 
@@ -38,13 +39,14 @@ const Sidebar = () => {
     return <SidebarSkeleton />;
   }
 
-  return (
-    <aside className="flex flex-col h-full border-r border-base-content/10 bg-base-200/50 backdrop-blur-md text-base-content">
+  // Shared content for both mobile and desktop - Added modern styling
+  const sidebarContent = (
+    <>
       {/* Fixed Header */}
-      <div className="p-4 flex flex-col border-b border-base-content/10">
+      <div className="p-4 flex flex-col border-b border-base-content/10 bg-base-100/50 dark:bg-base-300/50">
         {/* Title */}
         <div className="flex justify-between items-center mb-4">
-          <span className="font-medium text-lg text-base-content">
+          <span className="font-semibold text-lg text-base-content">
             Contacts
           </span>
         </div>
@@ -57,7 +59,7 @@ const Sidebar = () => {
             placeholder="Search contacts..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="input input-bordered w-full pl-10 bg-base-content/10 border-base-content/20 text-base-content placeholder-base-content/50 focus:border-primary rounded-md"
+            className="input input-bordered w-full pl-10 bg-base-content/10 dark:bg-base-200 border-base-content/20 text-base-content placeholder-base-content/50 focus:border-primary rounded-lg shadow-sm"
           />
         </div>
 
@@ -77,7 +79,7 @@ const Sidebar = () => {
               console.log("🔄 Refetching users...");
               getUsers();
             }}
-            className="ml-auto"
+            className="ml-auto p-1 rounded-md hover:bg-base-content/10 transition-colors"
           >
             <span className="text-xs text-base-content/50">
               <RefreshCcw size={14} className="inline" /> Refresh
@@ -96,27 +98,28 @@ const Sidebar = () => {
           filteredUsers.map((user) => (
             <div
               key={user._id}
-              className={`flex items-center gap-2 p-3 cursor-pointer rounded-lg mb-1 ${
+              className={`flex items-center gap-3 p-3 cursor-pointer rounded-lg mb-2 transition-all duration-200 ${
                 selectedUser?._id === user._id
-                  ? "bg-base-content/10"
-                  : "hover:bg-base-content/5"
+                  ? "bg-primary/20 dark:bg-primary/30 shadow-md"
+                  : "hover:bg-base-content/5 dark:hover:bg-base-300/20"
               }`}
               onClick={() => {
                 console.log("🖱️ User clicked:", user);
                 setSelectedUser(user);
+                if (isOpen) onClose(); // Close on mobile after selection
               }}
             >
               <div className="relative">
                 <img
                   src={
                     user.profilePic ||
-                    "/https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
+                    "https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
                   }
                   alt={user.fullName}
-                  className="size-12 object-cover rounded-full border-2 border-base-content/20"
+                  className="size-12 object-cover rounded-full border-2 border-base-content/20 shadow-sm"
                 />
                 {onlineUsers.includes(user._id) && (
-                  <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-base-200" />
+                  <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-base-200 dark:ring-base-300" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
@@ -135,7 +138,29 @@ const Sidebar = () => {
           </div>
         )}
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Overlay and Sidebar - Added smooth transition and dark mode support */}
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 z-40 lg:hidden transition-opacity duration-300"
+            onClick={onClose} // Closes on backdrop click
+          ></div>
+          <aside className="fixed left-0 top-0 h-full w-3/4 max-w-sm bg-base-200/90 dark:bg-base-300/90 backdrop-blur-md z-50 lg:hidden flex flex-col text-base-content rounded-r-lg shadow-2xl transition-transform duration-300 transform translate-x-0">
+            {sidebarContent}
+          </aside>
+        </>
+      )}
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex lg:flex-col h-full border-r border-base-content/10 bg-base-200/50 dark:bg-base-300/50 backdrop-blur-md text-base-content rounded-r-lg shadow-lg">
+        {sidebarContent}
+      </aside>
+    </>
   );
 };
 

@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import toast from "react-hot-toast";
 import { X, Image, Send } from "lucide-react";
-import Message from "../../../backend/src/models/message.model";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -88,14 +87,14 @@ const MessageInput = () => {
             <img
               src={imagePreview}
               alt="preview"
-              className="w-20 h-20 object-cover rounded-lg border border-zinc-700"
+              className="w-20 h-20 object-cover rounded-lg border border-zinc-700 dark:border-zinc-300 shadow-sm"
             />
             <button
               onClick={removeImage}
-              className="absolute top-1 right-1 bg-red-500 p-1 rounded-full"
+              className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 p-1 rounded-full transition-colors"
               type="button"
             >
-              <X className="size-3" />
+              <X className="size-3 text-white" />
             </button>
           </div>
         </div>
@@ -104,7 +103,7 @@ const MessageInput = () => {
         <div className="flex-1 flex gap-2">
           <input
             type="text"
-            className="w-full input input-bordered rounded-lg input-sm sm:input-md bg-base-200 text-base-content placeholder-base-content/50"
+            className="w-full input input-bordered rounded-lg input-sm sm:input-md bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content placeholder-base-content/50 dark:placeholder-base-content/70 border-base-content/20 dark:border-base-content/30 shadow-sm focus:shadow-md transition-shadow"
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -118,9 +117,7 @@ const MessageInput = () => {
           />
           <button
             type="button"
-            className={`hidden sm:flex btn btn-circle ${
-              imagePreview ? "text-emerald-500" : "text-base-content/60"
-            }`}
+            className={`hidden sm:flex btn btn-circle text-base-content/60 dark:text-base-content/80 hover:text-base-content dark:hover:text-primary transition-colors`}
             onClick={() => fileInptRef.current?.click()}
           >
             <Image size={20} />
@@ -128,7 +125,7 @@ const MessageInput = () => {
         </div>
         <button
           type="submit"
-          className="btn btn-sm btn-circle text-base-content/60 hover:text-base-content"
+          className="btn btn-sm btn-circle bg-base-300 dark:bg-primary text-base-content/60 dark:text-primary-content hover:bg-base-400 dark:hover:bg-primary-focus disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all"
           disabled={!text.trim() && !imagePreview}
         >
           <Send size={16} />

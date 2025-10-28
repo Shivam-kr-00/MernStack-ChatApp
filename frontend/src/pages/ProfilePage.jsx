@@ -58,7 +58,7 @@ const ProfilePage = () => {
                 src={
                   selectedImg ||
                   authUser?.profilePic ||
-                  "/https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
+                  "https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
                 }
                 alt="Profile"
                 className="h-full w-full object-cover"

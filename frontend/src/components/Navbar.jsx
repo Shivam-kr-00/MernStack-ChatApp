@@ -65,7 +65,7 @@ const Navbar = () => {
                         <img
                           src={
                             authUser.profilePic ||
-                            "/https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
+                            "https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
                           }
                           alt="profile"
                           className="w-full h-full object-cover"

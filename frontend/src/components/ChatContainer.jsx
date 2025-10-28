@@ -29,16 +29,22 @@ const ChatContainer = () => {
       subscribeToMessages();
       return () => unsubscribeFromMessages();
     }
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  }, [
+    selectedUser._id,
+    getMessages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
 
-  // ✅ Auto-scroll to the latest message
-useEffect(() => {
-  if (messageEndRef.current) {
-    // Scroll slightly higher to account for feedback box height
-    messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-  }
-}, [messages, suggestedMessage]);
-
+  // ✅ Auto-scroll to the latest message (enhanced for mobile)
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [messages, suggestedMessage]);
 
   // ✅ Generate suggestion from latest message
   useEffect(() => {
@@ -79,42 +85,51 @@ useEffect(() => {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-base-200/50 backdrop-blur-md">
+    <div className="flex-1 flex flex-col h-full bg-base-200/50 dark:bg-base-300/50 backdrop-blur-md rounded-lg shadow-inner">
       <ChatHeader />
 
       {/* ✅ AI-Suggested Message Box */}
       {suggestedMessage && (
-        <div className="px-4 py-2 my-2 rounded-md text-sm font-semibold text-base-content bg-base-300/90 backdrop-blur-md border border-base-300">
+        <div className="px-4 py-2 my-2 mx-4 rounded-lg text-sm font-semibold text-base-content bg-base-300/90 dark:bg-base-200/90 backdrop-blur-md border border-base-300 shadow-sm">
           💡 {suggestedMessage}
         </div>
       )}
 
-      {/* ✅ Scrollable Message Area */}
+      {/* ✅ Scrollable Message Area - Flex-1 for proper sizing */}
       <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4 chat-scrollbar">
         {messages.map((message) => {
           const emotion = detectEmotion(message.text || "");
 
           const emotionStyles = {
-            "Happy 😊": "bg-green-200 dark:bg-green-800/40 border-green-400 dark:border-green-500",
-            "Angry 😠": "bg-red-200 dark:bg-red-800/40 border-red-400 dark:border-red-500",
-            "Neutral 😐": "bg-gray-200 dark:bg-gray-700/40 border-gray-400 dark:border-gray-500",
+            "Happy 😊":
+              "bg-green-200 dark:bg-green-800/40 border-green-400 dark:border-green-500",
+            "Angry 😠":
+              "bg-red-200 dark:bg-red-800/40 border-red-400 dark:border-red-500",
+            "Neutral 😐":
+              "bg-gray-200 dark:bg-gray-700/40 border-gray-400 dark:border-gray-500",
           };
 
-          const emotionStyle = emotionStyles[emotion] || "bg-base-300/90 border-base-300";
+          const emotionStyle =
+            emotionStyles[emotion] ||
+            "bg-base-300/90 dark:bg-base-200/90 border-base-300";
 
           return (
             <div
               key={message._id}
-              className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
+              className={`chat ${
+                message.senderId === authUser._id ? "chat-end" : "chat-start"
+              }`}
             >
               {/* ✅ Avatar */}
               <div className="chat-image avatar">
-                <div className="size-10 rounded-full border border-base-content/10">
+                <div className="size-10 rounded-full border border-base-content/10 shadow-sm">
                   <img
                     src={
                       message.senderId === authUser._id
-                        ? authUser.profilePic || "/avatar.png"
-                        : selectedUser.profilePic || "/avatar.png"
+                        ? authUser.profilePic ||
+                          "https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
+                        : selectedUser.profilePic ||
+                          "https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
                     }
                     alt="profile pic"
                   />
@@ -128,7 +143,7 @@ useEffect(() => {
 
               {/* ✅ Message Bubble with Emotion-Based Styling */}
               <div
-                className={`chat-bubble flex flex-col backdrop-blur-sm text-base-content border ${emotionStyle}`}
+                className={`chat-bubble flex flex-col backdrop-blur-sm text-base-content border shadow-sm rounded-lg ${emotionStyle}`}
               >
                 {message.image && (
                   <img
@@ -147,8 +162,8 @@ useEffect(() => {
         <div ref={messageEndRef} />
       </div>
 
-      {/* ✅ Message Input Field */}
-      <div className="border-t border-base-300/50 bg-base-200/50 backdrop-blur-md">
+      {/* ✅ Message Input Field - Sticky on mobile, normal on desktop */}
+      <div className="lg:static lg:relative sticky bottom-0 bg-base-200/50 dark:bg-base-300/50 backdrop-blur-md border-t border-base-300/50 shadow-lg">
         <MessageInput />
       </div>
     </div>
