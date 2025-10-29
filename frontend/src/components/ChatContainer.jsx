@@ -85,18 +85,18 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-base-200/50 dark:bg-base-300/50 backdrop-blur-md rounded-lg shadow-inner">
+    <div className="flex-1 flex flex-col h-full bg-base-200/50 dark:bg-base-300/50 backdrop-blur-md rounded-lg shadow-inner overflow-hidden">
+      {" "}
+      {/* ✅ Added overflow-hidden to contain scrolling */}
       <ChatHeader />
-
       {/* ✅ AI-Suggested Message Box */}
       {suggestedMessage && (
         <div className="px-4 py-2 my-2 mx-4 rounded-lg text-sm font-semibold text-base-content bg-base-300/90 dark:bg-base-200/90 backdrop-blur-md border border-base-300 shadow-sm">
           💡 {suggestedMessage}
         </div>
       )}
-
-      {/* ✅ Scrollable Message Area - Flex-1 for proper sizing */}
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4 chat-scrollbar">
+      {/* ✅ Scrollable Message Area - Added pb-20 on mobile to account for fixed input */}
+      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4 chat-scrollbar pb-20 lg:pb-0">
         {messages.map((message) => {
           const emotion = detectEmotion(message.text || "");
 
@@ -161,9 +161,8 @@ const ChatContainer = () => {
         {/* ✅ Scroll Anchor */}
         <div ref={messageEndRef} />
       </div>
-
-      {/* ✅ Message Input Field - Sticky on mobile, normal on desktop */}
-      <div className="lg:static lg:relative sticky bottom-0 bg-base-200/50 dark:bg-base-300/50 backdrop-blur-md border-t border-base-300/50 shadow-lg">
+      {/* ✅ Message Input Field - Fixed on mobile for better UX, sticky on desktop */}
+      <div className="fixed bottom-0 left-0 right-0 lg:static lg:relative lg:sticky lg:bottom-0 bg-base-200/50 dark:bg-base-300/50 backdrop-blur-md border-t border-base-300/50 shadow-lg">
         <MessageInput />
       </div>
     </div>

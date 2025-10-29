@@ -7,6 +7,7 @@ const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInptRef = useRef(null);
+  const textInputRef = useRef(null); // ✅ New ref for the text input (to refocus after sending)
   const { sendMessages } = useChatStore();
 
   const detectEmotionFromBackend = async (messageText) => {
@@ -54,6 +55,11 @@ const MessageInput = () => {
       setText("");
       setImagePreview(null);
       if (fileInptRef.current) fileInptRef.current.value = "";
+
+      // ✅ Refocus the input to keep keyboard open on mobile and prevent scroll-down
+      if (textInputRef.current) {
+        textInputRef.current.focus();
+      }
     } catch (error) {
       console.error("❌ Failed to send message:", error);
       toast.error("Failed to send message");
@@ -102,6 +108,7 @@ const MessageInput = () => {
       <form onSubmit={handleSendMessage} className="flex items-center gap-2">
         <div className="flex-1 flex gap-2">
           <input
+            ref={textInputRef} // ✅ Attached the ref here for refocusing
             type="text"
             className="w-full input input-bordered rounded-lg input-sm sm:input-md bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content placeholder-base-content/50 dark:placeholder-base-content/70 border-base-content/20 dark:border-base-content/30 shadow-sm focus:shadow-md transition-shadow"
             placeholder="Type a message..."
@@ -117,7 +124,7 @@ const MessageInput = () => {
           />
           <button
             type="button"
-            className={`hidden sm:flex btn btn-circle text-base-content/60 dark:text-base-content/80 hover:text-base-content dark:hover:text-primary transition-colors`}
+            className={`flex btn btn-circle text-base-content/60 dark:text-base-content/80 hover:text-base-content dark:hover:text-primary transition-colors`} // ✅ Changed from "hidden sm:flex" to "flex" to show on all screens
             onClick={() => fileInptRef.current?.click()}
           >
             <Image size={20} />
