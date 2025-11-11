@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -23,7 +24,11 @@ const userSchema = new mongoose.Schema(
         phoneNumber: {
             type: String,
             default: ""
-        }
+        },
+        friends: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }]
     },
     { timestamps: true }
 );

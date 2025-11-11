@@ -6,6 +6,7 @@ import path from "path";
 import { connectDB } from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import friendRoutes from "./routes/friend.route.js";
 import { app, server } from "./lib/socket.js"; // `server` already created
 
 
@@ -45,6 +46,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/friends", friendRoutes);
 
 // --- Production Static File Serving Block ---
 // Commented out for development
@@ -69,5 +71,6 @@ if (process.env.NODE_ENV === "production") {
 // Start server and connect to DB
 server.listen(PORT, () => {
   console.log("Server is running on PORT: " + PORT);
+  server.timeout = 120000; 
   connectDB();
 });

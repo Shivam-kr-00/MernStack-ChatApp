@@ -109,20 +109,41 @@ body {
   .text-base-content {
     color: rgb(var(--color-base-content));
   }
-  
+
   .text-base-content-60 {
     color: rgba(var(--color-base-content), 0.6);
   }
-  
+
   .text-base-content-80 {
     color: rgba(var(--color-base-content), 0.8);
   }
-  
+
   .bg-base-content {
     background-color: rgb(var(--color-base-content));
   }
-  
+
   .border-base-content {
     border-color: rgb(var(--color-base-content));
   }
+}
+
+
+.custom-audio-player .rhap_progress-bar {
+  height: 8px !important;
+  /* Increase height for easier interaction */
+}
+
+.custom-audio-player .rhap_progress-indicator {
+  width: 16px !important;
+  /* Larger handle */
+  height: 16px !important;
+}
+
+.custom-audio-player .rhap_volume-bar {
+  height: 6px !important;
+}
+
+.custom-audio-player:hover {
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+  /* Subtle glow */
 }
