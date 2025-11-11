@@ -1,106 +1,93 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useFriendStore from "../store/useFriendStore";
-import { X, UserPlus, Check, X as RejectIcon } from "lucide-react";
 
-const FriendRequests = ({ onClose }) => {
-  const { getRequests, requests, handleRequest, isLoading } = useFriendStore();
+const FriendRequests = ({ isOpen, onClose }) => {
+  const { getRequests, requests, handleRequest } = useFriendStore();
+  const [loadingRequests, setLoadingRequests] = useState({});
 
+  // Load requests when modal opens
   useEffect(() => {
-    getRequests();
-  }, []);
+    if (isOpen) {
+      getRequests();
+    }
+  }, [isOpen, getRequests]);
 
-  // Close on Escape key
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  const handleRequestAction = async (id, action) => {
+    setLoadingRequests((prev) => ({ ...prev, [id]: true }));
+    try {
+      await handleRequest(id, action);
+    } catch (error) {
+      console.error("Error handling request:", error);
+    } finally {
+      setLoadingRequests((prev) => ({ ...prev, [id]: false }));
+    }
+  };
+
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-scale">
-      {/* Backdrop - Click to close */}
-      <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] transition-opacity duration-300 ease-in-out shadow-md"
+      onClick={handleBackdropClick}
+    >
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl max-w-lg w-full mx-4 transform transition-all duration-300 ease-in-out scale-100 border border-gray-200 dark:border-gray-700">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
+          Friend Requests
+        </h2>
 
-      {/* Modal Content - Enhanced with Tailwind Gradients and Effects */}
-      <div className="bg-gradient-to-br from-base-100/90 to-base-200/90 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-2xl w-full max-w-md mx-4 relative z-10">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Friend Requests
-          </h2>
-          <button
-            className="btn btn-sm btn-ghost hover:bg-base-content/10 hover:rotate-90 transition-transform duration-300"
-            onClick={onClose}
-            aria-label="Close friend requests"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Content */}
-        {isLoading ? (
-          <div className="text-center py-8 animate-pulse-subtle">
-            <div className="loading loading-spinner loading-lg text-primary"></div>
-            <p className="mt-2 text-base-content/70">Loading requests...</p>
-          </div>
-        ) : requests.length === 0 ? (
-          <div className="text-center py-8">
-            <UserPlus className="mx-auto text-base-content/50 mb-2 w-12 h-12" />
-            <p className="text-base-content/70">No pending requests.</p>
-            <p className="text-sm text-base-content/50 mt-1">
-              Check back later or send some invites!
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {requests.map((req, index) => (
+        <div className="space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+          {requests.length > 0 ? (
+            requests.map((req) => (
               <div
                 key={req._id}
-                className="flex justify-between items-center p-4 bg-gradient-to-r from-base-200/50 to-base-300/50 rounded-xl border border-base-content/10 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 animate-slide-in opacity-0"
-                style={{ animationDelay: `${index * 0.1}s` }} // Staggered delay (minimal inline for timing)
+                className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200"
               >
-                <div className="flex items-center gap-3">
-                  <img
-                    src={
-                      req.senderId?.profilePic ||
-                      "https://res.cloudinary.com/dahpi68b7/image/upload/v1761576531/avatar_boeayu.png"
-                    }
-                    alt={req.senderId?.fullName || "User"}
-                    className="w-10 h-10 rounded-full border-2 border-base-content/20 shadow-sm"
-                  />
-                  <div>
-                    <div className="font-medium text-base-content">
-                      {req.senderId?.fullName || "Unknown"}
-                    </div>
-                    <div className="text-sm text-base-content/70">
-                      {req.senderId?.email}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2">
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {req.senderId.fullName}
+                </span>
+                <div className="space-x-3">
                   <button
-                    onClick={() => handleRequest(req._id, "accept")}
-                    className="btn btn-sm bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 hover:scale-105 hover:shadow-lg transition-all duration-300 shadow-md"
-                    aria-label={`Accept request from ${req.senderId?.fullName}`}
+                    onClick={() => handleRequestAction(req._id, "accept")}
+                    disabled={loadingRequests[req._id]}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                      loadingRequests[req._id]
+                        ? "bg-gray-400 cursor-not-allowed text-gray-700"
+                        : "bg-green-500 hover:bg-green-600 text-white hover:shadow-lg"
+                    }`}
                   >
-                    <Check size={16} />
-                    Accept
+                    {loadingRequests[req._id] ? "Accepting..." : "Accept"}
                   </button>
                   <button
-                    onClick={() => handleRequest(req._id, "reject")}
-                    className="btn btn-sm bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 hover:scale-105 hover:shadow-lg transition-all duration-300 shadow-md"
-                    aria-label={`Reject request from ${req.senderId?.fullName}`}
+                    onClick={() => handleRequestAction(req._id, "reject")}
+                    disabled={loadingRequests[req._id]}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                      loadingRequests[req._id]
+                        ? "bg-gray-400 cursor-not-allowed text-gray-700"
+                        : "bg-red-500 hover:bg-red-600 text-white hover:shadow-lg"
+                    }`}
                   >
-                    <RejectIcon size={16} />
-                    Reject
+                    {loadingRequests[req._id] ? "Rejecting..." : "Reject"}
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          ) : (
+            <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+              No requests found.
+            </p>
+          )}
+        </div>
+
+        <button
+          onClick={onClose}
+          className="mt-6 w-full hover:scale-105 bg-red-400 hover:bg-red-600 dark:bg-red-400 dark:hover:bg-red-600 text-gray-800 dark:text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200"
+        >
+          Close
+        </button>
       </div>
     </div>
   );

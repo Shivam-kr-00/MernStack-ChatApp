@@ -1,7 +1,7 @@
 import React from "react";
 import { MessageSquare, Users } from "lucide-react"; // Added Users for the button icon
 
-const NoChatSelected = () => {
+const NoChatSelected = ({ onFindFriends }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center text-base-content p-8 bg-[radial-gradient(circle_at_center,_rgba(229,231,235,0.5)_0%,_rgba(209,213,219,0.5)_100%)] dark:bg-[radial-gradient(circle_at_center,_rgba(209,213,219,0.5)_0%,_rgba(243,244,246,0.5)_100%)] backdrop-blur-md rounded-2xl shadow-inner animate-in animate-in-fade-in animate-in-duration-800 animate-in-easing-out animate-in-slide-in-from-bottom-5">
       {/* Icon Container - Enhanced with Gradient, Glassmorphism, and Pulse */}
@@ -25,7 +25,9 @@ const NoChatSelected = () => {
         className="btn btn-primary btn-outline rounded-xl px-6 py-3 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:scale-105 transition-shadow duration-300 transition-transform duration-300 flex items-center gap-2"
         onClick={() => {
           // Placeholder: You can add logic here, e.g., open sidebar or navigate to friends page
-          console.log("Find friends clicked!");
+          {
+            onFindFriends;
+          }
           // Example: If you have a way to open the sidebar, call it here
         }}
         aria-label="Find friends to start chatting"

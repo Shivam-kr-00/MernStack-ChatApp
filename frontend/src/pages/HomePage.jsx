@@ -1,18 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import Sidebar from "../components/Sidebar";
 import NoChatSelected from "../components/NoChatSelected";
 import ChatContainer from "../components/ChatContainer";
-import { Menu } from "lucide-react"; // Import for hamburger icon
+import { Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const { selectedUser } = useChatStore();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // ✅ Automatically close sidebar on desktop resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // ✅ Automatically close sidebar when a user is selected (mobile only)
+  useEffect(() => {
+    if (selectedUser && window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [selectedUser]);
 
   return (
     <div className="h-screen pt-16 bg-gradient-to-br from-base-200 via-base-300 to-base-100 dark:from-base-300 dark:via-base-100 dark:to-base-200 flex overflow-hidden relative animate-shimmer">
-      {/* Custom CSS for animations (add to your global CSS or Tailwind config) */}
-      <style jsx>{`
+      {/* ✨ Custom animations */}
+      <style>{`
         @keyframes shimmer {
           0%,
           100% {
@@ -39,18 +59,6 @@ const HomePage = () => {
             transform: translateY(0);
           }
         }
-        .pulse-subtle {
-          animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.8;
-          }
-        }
         .glassmorphism {
           backdrop-filter: blur(10px);
           background: rgba(255, 255, 255, 0.1);
@@ -58,20 +66,11 @@ const HomePage = () => {
         }
       `}</style>
 
-      {/* Backdrop for mobile sidebar (click to close) */}
-      {isSidebarOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300"
-          onClick={() => setIsSidebarOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Enhanced Hamburger Button */}
+      {/* 🍔 Hamburger Button (only on mobile) */}
       <button
         onClick={() => setIsSidebarOpen(true)}
         className="lg:hidden fixed top-20 left-4 z-50 p-3 glassmorphism rounded-xl shadow-lg hover:shadow-2xl hover:scale-110 transition-all duration-300 border border-base-300/20 group"
-        aria-label="Open contacts"
+        aria-label="Open sidebar"
       >
         <Menu
           size={24}
@@ -79,11 +78,19 @@ const HomePage = () => {
         />
       </button>
 
-      {/* Sidebar with Fixed Slide Animation for Mobile, Always Visible on Desktop */}
+      {/* 🌑 Overlay (close on click outside) */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* 🧱 Sidebar */}
       <div
-        className={`transition-transform duration-300 ${
+        className={`fixed top-0 left-0 h-screen w-64 lg:relative lg:h-auto z-50 lg:z-auto transform transition-transform duration-300 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } lg:relative lg:translate-x-0`}
+        }`}
       >
         <Sidebar
           isOpen={isSidebarOpen}
@@ -91,11 +98,11 @@ const HomePage = () => {
         />
       </div>
 
-      {/* Chat Container - Enhanced with Fade-In and Better Spacing */}
-      <div className="w-full lg:w-3/5 h-full flex flex-col overflow-hidden">
+      {/* 💬 Chat Area */}
+      <div className="flex-1 h-full flex flex-col overflow-hidden">
         {!selectedUser ? (
-          <div className="flex justify-center items-center h-full w-full pulse-subtle">
-            <NoChatSelected />
+          <div className="flex justify-center items-center h-full w-full">
+            <NoChatSelected onFindFriends={() => navigate("/friends")} />
           </div>
         ) : (
           <div className="flex-1 p-4 h-full fade-in">
